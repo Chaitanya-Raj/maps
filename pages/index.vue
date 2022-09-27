@@ -11,7 +11,6 @@ import Search from "~/components/Search.vue";
 export default {
   components: { Search },
   name: "IndexPage",
-  components: ["Search"],
   data() {
     return {
       map: {},
@@ -28,10 +27,10 @@ export default {
   methods: {
     createMap() {
       mapboxgl.accessToken = this.mapboxAccessToken;
-      this.map = new mapboxgl.Map({
-        container: "map",
-        style: "mapbox://styles/mapbox/streets-v11",
-      });
+      // this.map = new mapboxgl.Map({
+      //   container: "map",
+      //   style: "mapbox://styles/mapbox/streets-v11",
+      // });
     },
   },
 };
