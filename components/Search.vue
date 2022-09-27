@@ -1,42 +1,55 @@
 <template>
-  <div class="search-cont inline-flex gap-2 bg-white p-2 rounded-lg shadow-lg">
+  <div class="fixed top-5 left-5">
     <ais-instant-search index-name="users" :search-client="searchClient">
       <ais-configure
-        :attributesToSnippet="['fullName', 'designation']"
-        :hits-per-page.camel="5"
+        :attributesToSnippet="[
+          'fullName',
+          'designation',
+          'location.city',
+          'location.country',
+        ]"
+        :hits-per-page.camel="20"
         snippetEllipsisText="…"
       >
         <ais-autocomplete>
           <template v-slot="{ currentRefinement, indices, refine }">
-            <input
-              type="search"
-              :value="currentRefinement"
-              placeholder="Search Members"
-              @input="refine($event.currentTarget.value)"
-            />
-            <ais-stats />
+            <div class="flex border border-gray-400 rounded-xl p-4">
+              <!-- <a
+              href="https://www.flaticon.com/free-icons/search"
+              title="search icons"
+              >Search icons created by Catalin Fertu - Flaticon</a
+            > -->
+              <div class="flex items-center">
+                <img src="search-interface-symbol.png" alt="" class="h-5" />
+              </div>
+              <input
+                type="search"
+                :value="currentRefinement"
+                placeholder="Search Members"
+                @input="refine($event.currentTarget.value)"
+                class="ml-4 outline-none"
+              />
+            </div>
             <template v-if="currentRefinement">
-              <ul v-for="index in indices" :key="index.indexId">
-                <li>
-                  <h3>{{ index.indexName }}</h3>
-                  <ul>
-                    <li v-for="hit in index.hits" :key="hit.objectID">
-                      <!-- <h1>
+              <ul
+                v-for="index in indices"
+                :key="index.indexId"
+                class="bg-white max-h-96 rounded-md border-gray-500 border mt-2 p-4 overflow-y-scroll"
+              >
+                <li v-for="hit in index.hits" :key="hit.objectID" class="mb-2">
+                  <!-- <h1>
                         <ais-highlight attribute="fullName" :hit="hit" />
                       </h1> -->
-                      <!-- <h2>
+                  <!-- <h2>
                         <ais-highlight attribute="designation" :hit="hit" />
                       </h2> -->
-                      <p class="flex flex-col p-2 border-black border">
-                        <ais-snippet attribute="fullName" :hit="hit" />
-                        <ais-snippet attribute="designation" :hit="hit" />
-                      </p>
-                    </li>
-                  </ul>
+                  <p class="flex flex-col">
+                    <ais-snippet attribute="fullName" :hit="hit" />
+                    <ais-snippet attribute="location.city" :hit="hit" />
+                  </p>
                 </li>
               </ul>
             </template>
-            <ais-pagination />
           </template>
         </ais-autocomplete>
       </ais-configure>
