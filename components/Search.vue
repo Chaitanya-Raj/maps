@@ -13,7 +13,7 @@
       >
         <ais-autocomplete>
           <template v-slot="{ currentRefinement, indices, refine }">
-            <div class="flex border border-gray-400 rounded-xl p-4">
+            <div class="flex border border-gray-400 rounded-xl p-4 bg-white">
               <!-- <a
               href="https://www.flaticon.com/free-icons/search"
               title="search icons"

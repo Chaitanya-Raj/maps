@@ -35,6 +35,7 @@ export default {
   publicRuntimeConfig: {
     APP_ID: process.env.API_ID,
     SEARCH_API_KEY: process.env.SEARCH_API_KEY,
+    MAPBOX_API_KEY: process.env.MAPBOX_API_KEY,
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
