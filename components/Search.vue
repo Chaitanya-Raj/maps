@@ -3,7 +3,7 @@
     <ais-instant-search index-name="users" :search-client="searchClient">
       <ais-configure
         :attributesToSnippet="['fullName', 'location.city', 'location.country']"
-        :hits-per-page.camel="20"
+        :hits-per-page.camel="500"
         snippetEllipsisText="…"
       >
         <ais-autocomplete>
@@ -34,7 +34,10 @@
                 <li
                   v-for="hit in index.hits"
                   :key="hit.objectID"
-                  class="flex items-center gap-2 mb-2"
+                  class="flex items-center gap-2 mb-2 cursor-pointer"
+                  @click="
+                    $emit('fly', [hit['location.lng'], hit['location.lat']])
+                  "
                 >
                   <div class="flex items-center">
                     <img :src="hit.photo" alt="" class="rounded-full" />
@@ -71,12 +74,12 @@ export default {
   },
   computed: {
     searchClient() {
-      // return algoliaSearch(this.appID, this.searchKey);
+      return algoliaSearch(this.appID, this.searchKey);
     },
   },
   methods: {
     getSearchResults(items) {
-      console.log(items);
+      this.$emit("search", items);
     },
   },
 };
