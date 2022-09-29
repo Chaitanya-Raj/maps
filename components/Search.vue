@@ -11,11 +11,6 @@
             <div
               class="rounded-xl opacity-90 flex p-4 transition-all bg-white border border-gray-400 shadow-lg"
             >
-              <!-- <a
-              href="https://www.flaticon.com/free-icons/search"
-              title="search icons"
-              >Search icons created by Catalin Fertu - Flaticon</a
-            > -->
               <div class="flex items-center">
                 <img src="search-interface-symbol.png" alt="" class="h-5" />
               </div>
@@ -60,6 +55,59 @@
             </template>
           </template>
         </ais-autocomplete>
+        <ais-stats class="mt-1 ml-1" />
+        <!-- <ais-pagination>
+          <template
+            v-slot="{
+              currentRefinement,
+              nbPages,
+              pages,
+              isFirstPage,
+              isLastPage,
+              refine,
+              createURL,
+            }"
+          >
+            <ul class="opacity-90 flex p-2 bg-white rounded-full">
+              <li v-if="!isFirstPage">
+                <a :href="createURL(0)" @click.prevent="refine(0)"> ‹‹ </a>
+              </li>
+              <li v-if="!isFirstPage">
+                <a
+                  :href="createURL(currentRefinement - 1)"
+                  @click.prevent="refine(currentRefinement - 1)"
+                >
+                  ‹
+                </a>
+              </li>
+              <li v-for="page in pages" :key="page">
+                <a
+                  :href="createURL(page)"
+                  :style="{
+                    fontWeight: page === currentRefinement ? 'bold' : '',
+                  }"
+                  @click.prevent="refine(page)"
+                >
+                  {{ page + 1 }}
+                </a>
+              </li>
+              <li v-if="!isLastPage">
+                <a
+                  :href="createURL(currentRefinement + 1)"
+                  @click.prevent="refine(currentRefinement + 1)"
+                >
+                  ›
+                </a>
+              </li>
+              <li v-if="!isLastPage">
+                <a :href="createURL(nbPages)" @click.prevent="refine(nbPages)">
+                  ››
+                </a>
+              </li>
+            </ul>
+          </template>
+        </ais-pagination> -->
+
         <ais-hits class="hidden" :transform-items="getSearchResults" />
       </ais-configure>
     </ais-instant-search>

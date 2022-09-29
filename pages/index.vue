@@ -34,8 +34,8 @@ export default {
       mapboxgl.accessToken = this.mapboxAccessToken;
       this.map = new mapboxgl.Map({
         container: "map",
-        style: "mapbox://styles/mapbox/streets-v11?optimize=true",
-        // style: "mapbox://styles/chaitanyaraj/cl8lvjgqa000m15nt3i9wihwr",
+        // style: "mapbox://styles/mapbox/streets-v11?optimize=true",
+        style: "mapbox://styles/chaitanyaraj/cl8lvjgqa000m15nt3i9wihwr",
       });
 
       this.map.addControl(
@@ -91,55 +91,51 @@ export default {
       // });
 
       this.map.on("load", () => {
-        // Add an image to use as a custom marker
-        this.map.loadImage(
-          "https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png",
-          (error, image) => {
-            if (error) throw error;
-            this.map.addImage("custom-marker", image);
-            // Add a GeoJSON source with 2 points
-            const feat = items.map((item) => {
-              this.map.loadImage(item.photo, (error, image) => {
-                this.map.addImage(item.id, image);
-              });
-              return {
-                type: "Feature",
-                geometry: {
-                  type: "Point",
-                  coordinates: [item["location.lng"], item["location.lat"]],
-                },
-                properties: {
-                  title: item.fullName,
-                  icon: item.id,
-                },
-              };
-            });
-            this.map.addSource("users", {
-              type: "geojson",
-              tolerance: 0,
-              data: {
-                type: "FeatureCollection",
-                features: feat,
-              },
-            });
+        const feat = items.map((item) => {
+          // Add an image to use as a custom marker
+          this.map.loadImage(item.photo, (error, image) => {
+            if (error);
+            this.map.addImage(item.objectID, image);
+          });
+          return {
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: [item["location.lng"], item["location.lat"]],
+            },
+            properties: {
+              title: item.fullName,
+              icon: item.objectID,
+            },
+          };
+        });
+        this.map.addSource("users", {
+          type: "geojson",
+          tolerance: 0,
+          data: {
+            type: "FeatureCollection",
+            features: feat,
+          },
+        });
 
-            // Add a symbol layer
-            this.map.addLayer({
-              id: "users",
-              type: "symbol",
-              source: "users",
-              layout: {
-                "icon-image": ["get", "icon"],
-                "icon-allow-overlap": true,
-                // get the title name from the source's "title" property
-                "text-field": ["get", "title"],
-                "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-                "text-offset": [0, 1.25],
-                "text-anchor": "top",
-              },
-            });
-          }
-        );
+        // Add a symbol layer
+        this.map.addLayer({
+          id: "users",
+          type: "symbol",
+          source: "users",
+          layout: {
+            "icon-image": ["get", "icon"],
+            // "icon-allow-overlap": true,
+            "icon-size": 0.75,
+            // get the title name from the source's "title" property
+            "text-field": ["get", "title"],
+            "text-optional": true,
+            // "text-allow-overlap": true,
+            "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+            "text-offset": [0, 2],
+            "text-anchor": "top",
+          },
+        });
       });
     },
     //Can be removed to improve performance
