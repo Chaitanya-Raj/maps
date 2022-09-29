@@ -1,5 +1,5 @@
 <template>
-  <div class="top-5 left-5 fixed">
+  <div class="top-5 left-5 w-96 fixed">
     <ais-instant-search index-name="users" :search-client="searchClient">
       <ais-configure
         :attributesToSnippet="['fullName', 'location.city', 'location.country']"
@@ -8,7 +8,9 @@
       >
         <ais-autocomplete>
           <template v-slot="{ currentRefinement, indices, refine }">
-            <div class="rounded-xl flex p-4 bg-white border border-gray-400">
+            <div
+              class="rounded-xl opacity-90 flex p-4 transition-all bg-white border border-gray-400 shadow-lg"
+            >
               <!-- <a
               href="https://www.flaticon.com/free-icons/search"
               title="search icons"
@@ -22,14 +24,14 @@
                 :value="currentRefinement"
                 placeholder="Search Members"
                 @input="refine($event.currentTarget.value)"
-                class="ml-4 outline-none"
+                class="font-poppins w-full ml-4 outline-none opacity-100"
               />
             </div>
             <template v-if="currentRefinement">
               <ul
                 v-for="index in indices"
                 :key="index.indexId"
-                class="max-h-96 p-2 my-2 overflow-y-scroll bg-white border border-gray-500 rounded-md"
+                class="max-h-96 opacity-90 p-2 my-2 overflow-y-scroll bg-white border border-gray-500 rounded-lg shadow-lg"
               >
                 <li
                   v-for="hit in index.hits"
@@ -40,9 +42,13 @@
                   "
                 >
                   <div class="flex items-center">
-                    <img :src="hit.photo" alt="" class="rounded-full" />
+                    <img
+                      :src="hit.photo"
+                      alt=""
+                      class="rounded-full opacity-100"
+                    />
                   </div>
-                  <p class="flex flex-col">
+                  <p class="font-poppins flex flex-col opacity-100">
                     <span class="text-lg">{{ hit.fullName }}</span>
                     <span class="text-gray-600"
                       >{{ hit["location.city"] }},
@@ -84,3 +90,20 @@ export default {
   },
 };
 </script>
+
+<style>
+*::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #f5f5f5;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  background-color: #f5f5f5;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #000000;
+}
+</style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="map" class="min-w-full min-h-screen"></div>
+    <div id="map" class="font-poppins min-w-full min-h-screen"></div>
     <search
       @search="(items) => addMarkers(items)"
       @fly="(coordinates) => flyToLocation(coordinates)"
@@ -34,49 +34,120 @@ export default {
       mapboxgl.accessToken = this.mapboxAccessToken;
       this.map = new mapboxgl.Map({
         container: "map",
-        style: "mapbox://styles/mapbox/streets-v11",
+        style: "mapbox://styles/mapbox/streets-v11?optimize=true",
+        // style: "mapbox://styles/chaitanyaraj/cl8lvjgqa000m15nt3i9wihwr",
       });
+
+      this.map.addControl(
+        new mapboxgl.GeolocateControl({
+          positionOptions: {
+            enableHighAccuracy: true,
+          },
+          // When active the map will receive updates to the device's location as it changes.
+          trackUserLocation: true,
+          // Draw an arrow next to the location dot to indicate which direction the device is heading.
+          showUserHeading: true,
+        })
+      );
     },
     addMarkers(items) {
-      this.markers.forEach((marker) => marker.remove());
-      items.forEach((item) => {
-        const el = document.createElement("div");
-        el.className =
-          "bg-white px-2 py-1 border border-gray-400 flex rounded-lg";
+      // this.markers.forEach((marker) => marker.remove());
+      // items.forEach((item) => {
+      //   const el = document.createElement("div");
+      //   el.className =
+      //     "bg-white px-2 py-1 border border-gray-400 flex rounded-lg font-poppins";
 
-        const img = document.createElement("img");
-        img.src = item.photo;
-        img.className = "h-8 mr-2 rounded-full";
+      //   const img = document.createElement("img");
+      //   img.src = item.photo;
+      //   img.className = "h-8 mr-2 rounded-full";
 
-        const text = document.createElement("div");
-        text.className = "flex flex-col";
+      //   const text = document.createElement("div");
+      //   text.className = "flex flex-col";
 
-        const name = document.createElement("p");
-        name.innerText = item.fullName;
-        name.className = "text-sm";
+      //   const name = document.createElement("p");
+      //   name.innerText = item.fullName;
+      //   name.className = "text-sm";
 
-        const company = document.createElement("p");
-        company.innerText = item.companyName;
-        company.className = "text-gray-500 text-xs";
+      //   const company = document.createElement("p");
+      //   company.innerText = item.companyName;
+      //   company.className = "text-gray-500 text-xs";
 
-        text.appendChild(name);
-        text.appendChild(company);
+      //   text.appendChild(name);
+      //   text.appendChild(company);
 
-        el.appendChild(img);
-        el.appendChild(text);
+      //   el.appendChild(img);
+      //   el.appendChild(text);
 
-        this.markers.push(
-          new mapboxgl.Marker(el)
-            .setLngLat([item["location.lng"], item["location.lat"]])
-            .addTo(this.map)
+      //   // el.addEventListener(
+      //   //   "click",
+      //   //   this.flyToLocation([item["location.lng"], item["location.lat"]])
+      //   // );
+
+      //   this.markers.push(
+      //     new mapboxgl.Marker(el)
+      //       .setLngLat([item["location.lng"], item["location.lat"]])
+      //       .addTo(this.map)
+      //   );
+      // });
+
+      this.map.on("load", () => {
+        // Add an image to use as a custom marker
+        this.map.loadImage(
+          "https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png",
+          (error, image) => {
+            if (error) throw error;
+            this.map.addImage("custom-marker", image);
+            // Add a GeoJSON source with 2 points
+            const feat = items.map((item) => {
+              this.map.loadImage(item.photo, (error, image) => {
+                this.map.addImage(item.id, image);
+              });
+              return {
+                type: "Feature",
+                geometry: {
+                  type: "Point",
+                  coordinates: [item["location.lng"], item["location.lat"]],
+                },
+                properties: {
+                  title: item.fullName,
+                  icon: item.id,
+                },
+              };
+            });
+            this.map.addSource("users", {
+              type: "geojson",
+              tolerance: 0,
+              data: {
+                type: "FeatureCollection",
+                features: feat,
+              },
+            });
+
+            // Add a symbol layer
+            this.map.addLayer({
+              id: "users",
+              type: "symbol",
+              source: "users",
+              layout: {
+                "icon-image": ["get", "icon"],
+                "icon-allow-overlap": true,
+                // get the title name from the source's "title" property
+                "text-field": ["get", "title"],
+                "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+                "text-offset": [0, 1.25],
+                "text-anchor": "top",
+              },
+            });
+          }
         );
       });
     },
+    //Can be removed to improve performance
     flyToLocation(coordinates) {
-      console.log(coordinates);
       this.map.flyTo({
         center: coordinates,
-        essential: true,
+        duration: 8000,
+        zoom: 12.5,
       });
     },
   },
