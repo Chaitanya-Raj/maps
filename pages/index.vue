@@ -32,12 +32,19 @@ export default {
   methods: {
     createMap() {
       mapboxgl.accessToken = this.mapboxAccessToken;
+
+      // Initialize the map.
       this.map = new mapboxgl.Map({
         container: "map",
         // style: "mapbox://styles/mapbox/streets-v11?optimize=true",
         style: "mapbox://styles/chaitanyaraj/cl8lvjgqa000m15nt3i9wihwr",
+        zoom: 0,
       });
 
+      // Add zoom and rotation controls to the map.
+      this.map.addControl(new mapboxgl.NavigationControl());
+
+      // Add user location control to the map.
       this.map.addControl(
         new mapboxgl.GeolocateControl({
           positionOptions: {
