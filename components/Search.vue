@@ -9,7 +9,7 @@
         <ais-autocomplete>
           <template v-slot="{ currentRefinement, indices, refine }">
             <div
-              class="rounded-xl opacity-90 flex p-4 transition-all bg-white border border-gray-400 shadow-lg"
+              class="rounded-xl opacity-90 flex p-4 transition-all bg-[#eef4f5] shadow-lg"
             >
               <div class="flex items-center">
                 <img src="search-interface-symbol.png" alt="" class="h-5" />
@@ -19,28 +19,35 @@
                 :value="currentRefinement"
                 placeholder="Search Members"
                 @input="refine($event.currentTarget.value)"
-                class="font-poppins w-full ml-4 outline-none opacity-100"
+                class="font-poppins w-full ml-4 outline-none opacity-100 bg-[#eef4f5] transition-all"
               />
             </div>
             <template v-if="currentRefinement">
               <ul
                 v-for="index in indices"
                 :key="index.indexId"
-                class="max-h-96 opacity-90 p-2 my-2 overflow-y-scroll bg-white border border-gray-500 rounded-lg shadow-lg"
+                class="max-h-96 opacity-90 p-4 my-2 overflow-y-scroll bg-[#eef4f5] rounded-lg shadow-lg scroll-smooth transition-all"
               >
                 <li
                   v-for="hit in index.hits"
                   :key="hit.objectID"
-                  class="flex items-center gap-2 mb-2 cursor-pointer"
+                  class="flex items-center gap-2 mb-4 cursor-pointer"
                   @click="
                     $emit('fly', [hit['location.lng'], hit['location.lat']])
                   "
                 >
                   <div class="flex items-center">
                     <img
-                      :src="hit.photo"
+                      :src="`https://ui-avatars.com/api/?background=${'000000'.replace(
+                        /0/g,
+                        function () {
+                          return (~~(Math.random() * 16)).toString(16);
+                        }
+                      )}&color=fff&name=${hit.fullName.split(' ')[0]}+${
+                        hit.fullName.split(' ')[1]
+                      }`"
                       alt=""
-                      class="rounded-full opacity-100"
+                      class="w-12 rounded-full opacity-100"
                     />
                   </div>
                   <p class="font-poppins flex flex-col opacity-100">

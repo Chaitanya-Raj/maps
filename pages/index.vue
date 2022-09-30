@@ -37,9 +37,13 @@ export default {
       this.map = new mapboxgl.Map({
         container: "map",
         // style: "mapbox://styles/mapbox/streets-v11?optimize=true",
-        style: "mapbox://styles/chaitanyaraj/cl8lvjgqa000m15nt3i9wihwr",
+        // style: "mapbox://styles/chaitanyaraj/cl8lvjgqa000m15nt3i9wihwr?optimize=true",
+        style:
+          "mapbox://styles/chaitanyaraj/cl8oazq8v002115lgjwjkbixh?optimize=true",
         zoom: 2,
         center: [-9.142685, 38.736946],
+        projection: "mercator",
+        // projection: "globe",
       });
 
       // Add zoom and rotation controls to the map.
@@ -120,9 +124,9 @@ export default {
               "step",
               ["get", "point_count"],
               "#7CC6FE",
-              100,
+              30,
               "#FCB0B3",
-              750,
+              60,
               "#DBD56E",
             ],
             "circle-radius": [
@@ -217,7 +221,7 @@ export default {
         center: coordinates,
         duration: 8000,
         zoom: 12.5,
-        pitch: 75,
+        // pitch: 75,
       });
     },
   },
