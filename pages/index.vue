@@ -38,7 +38,8 @@ export default {
         container: "map",
         // style: "mapbox://styles/mapbox/streets-v11?optimize=true",
         style: "mapbox://styles/chaitanyaraj/cl8lvjgqa000m15nt3i9wihwr",
-        zoom: 0,
+        zoom: 2,
+        center: [-9.142685, 38.736946],
       });
 
       // Add zoom and rotation controls to the map.
@@ -58,52 +59,28 @@ export default {
       );
     },
     addMarkers(items) {
-      // this.markers.forEach((marker) => marker.remove());
-      // items.forEach((item) => {
-      //   const el = document.createElement("div");
-      //   el.className =
-      //     "bg-white px-2 py-1 border border-gray-400 flex rounded-lg font-poppins";
-
-      //   const img = document.createElement("img");
-      //   img.src = item.photo;
-      //   img.className = "h-8 mr-2 rounded-full";
-
-      //   const text = document.createElement("div");
-      //   text.className = "flex flex-col";
-
-      //   const name = document.createElement("p");
-      //   name.innerText = item.fullName;
-      //   name.className = "text-sm";
-
-      //   const company = document.createElement("p");
-      //   company.innerText = item.companyName;
-      //   company.className = "text-gray-500 text-xs";
-
-      //   text.appendChild(name);
-      //   text.appendChild(company);
-
-      //   el.appendChild(img);
-      //   el.appendChild(text);
-
-      //   // el.addEventListener(
-      //   //   "click",
-      //   //   this.flyToLocation([item["location.lng"], item["location.lat"]])
-      //   // );
-
-      //   this.markers.push(
-      //     new mapboxgl.Marker(el)
-      //       .setLngLat([item["location.lng"], item["location.lat"]])
-      //       .addTo(this.map)
-      //   );
-      // });
-
       this.map.on("load", () => {
         const feat = items.map((item) => {
           // Add an image to use as a custom marker
-          this.map.loadImage(item.photo, (error, image) => {
-            if (error);
-            this.map.addImage(item.objectID, image);
-          });
+          this.map.loadImage(
+            `https://ui-avatars.com/api/?background=000&color=fff&name=${
+              item.fullName.split(" ")[0]
+            }+${item.fullName.split(" ")[1]}`,
+            // ${"000000".replace(
+            //   /0/g,
+            //   function () {
+            //     return (~~(Math.random() * 16)).toString(16);
+            //   }
+            // )}
+            // `https://xsgames.co/randomusers/assets/avatars/male/${Math.floor(
+            //   Math.random() * 70
+            // )}.jpg`,
+            // "https://thispersondoesnotexist.com/",
+            (error, image) => {
+              if (error) console.log("xD");
+              this.map.addImage(item.objectID, image);
+            }
+          );
           return {
             type: "Feature",
             geometry: {
@@ -118,30 +95,119 @@ export default {
         });
         this.map.addSource("users", {
           type: "geojson",
-          tolerance: 0,
           data: {
             type: "FeatureCollection",
             features: feat,
+          },
+          tolerance: 0,
+          cluster: true,
+          clusterMaxZoom: 14, // Max zoom to cluster points on
+          clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
+        });
+
+        this.map.addLayer({
+          id: "clusters",
+          type: "circle",
+          source: "users",
+          filter: ["has", "point_count"],
+          paint: {
+            // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+            // with three steps to implement three types of circles:
+            //   * Blue, 20px circles when point count is less than 100
+            //   * Yellow, 30px circles when point count is between 100 and 750
+            //   * Pink, 40px circles when point count is greater than or equal to 750
+            "circle-color": [
+              "step",
+              ["get", "point_count"],
+              "#7CC6FE",
+              100,
+              "#FCB0B3",
+              750,
+              "#DBD56E",
+            ],
+            "circle-radius": [
+              "step",
+              ["get", "point_count"],
+              20,
+              100,
+              30,
+              750,
+              40,
+            ],
+            "circle-opacity": 0.5,
           },
         });
 
         // Add a symbol layer
         this.map.addLayer({
-          id: "users",
+          id: "cluster-count",
           type: "symbol",
           source: "users",
+          filter: ["has", "point_count"],
+          layout: {
+            "text-field": "{point_count_abbreviated}",
+            "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+            "text-size": 12,
+          },
+        });
+
+        this.map.addLayer({
+          id: "unclustered-point",
+          type: "symbol",
+          source: "users",
+          filter: ["!", ["has", "point_count"]],
           layout: {
             "icon-image": ["get", "icon"],
-            // "icon-allow-overlap": true,
-            "icon-size": 0.75,
-            // get the title name from the source's "title" property
+            "icon-allow-overlap": true,
+            "icon-size": 0.4,
             "text-field": ["get", "title"],
             "text-optional": true,
-            // "text-allow-overlap": true,
+            "text-size": 12,
+            "text-allow-overlap": true,
             "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-            "text-offset": [0, 2],
+            "text-offset": [0, 1.5],
             "text-anchor": "top",
           },
+          paint: {
+            "icon-opacity": 0.8,
+            "text-opacity": 0.8,
+            // "text-halo-blur": 1,
+            // "text-halo-width": 2,
+            // "text-halo-color": "#ffffff",
+          },
+        });
+
+        // inspect a cluster on click
+        this.map.on("click", "clusters", (e) => {
+          const features = map.queryRenderedFeatures(e.point, {
+            layers: ["clusters"],
+          });
+          const clusterId = features[0].properties.cluster_id;
+          this.map
+            .getSource("earthquakes")
+            .getClusterExpansionZoom(clusterId, (err, zoom) => {
+              if (err) return;
+
+              this.map.easeTo({
+                center: features[0].geometry.coordinates,
+                zoom: zoom,
+              });
+            });
+        });
+
+        // Center the map on the coordinates of any clicked circle from the 'users' layer.
+        this.map.on("click", "unclustered-point", (e) => {
+          this.flyToLocation(e.features[0].geometry.coordinates);
+        });
+
+        // Change the cursor to a pointer when the it enters a feature in the 'circle' layer.
+        this.map.on("mouseenter", "unclustered-point", () => {
+          this.map.getCanvas().style.cursor = "pointer";
+        });
+
+        // Change it back to a pointer when it leaves.
+        this.map.on("mouseleave", "unclustered-point", () => {
+          this.map.getCanvas().style.cursor = "";
         });
       });
     },
@@ -151,6 +217,7 @@ export default {
         center: coordinates,
         duration: 8000,
         zoom: 12.5,
+        pitch: 75,
       });
     },
   },

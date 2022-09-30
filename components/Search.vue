@@ -55,7 +55,7 @@
             </template>
           </template>
         </ais-autocomplete>
-        <ais-stats class="mt-1 ml-1" />
+        <!-- <ais-stats class="opacity-80 mt-1 ml-1" /> -->
         <!-- <ais-pagination>
           <template
             v-slot="{
