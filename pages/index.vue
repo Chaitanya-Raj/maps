@@ -6,6 +6,7 @@
         @search="(items) => addMarkers(items)"
         @fly="(coordinates) => flyToLocation(coordinates)"
       />
+      <user-count :count="10000" />
     </div>
     <transition>
       <profile
@@ -22,8 +23,9 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Search from "~/components/Search.vue";
 import Profile from "~/components/Profile.vue";
+import UserCount from "~/components/UserCount.vue";
 export default {
-  components: { Search, Profile },
+  components: { Search, Profile, UserCount },
   name: "IndexPage",
   data() {
     return {
@@ -239,8 +241,9 @@ export default {
     flyToLocation(coordinates) {
       this.map.flyTo({
         center: coordinates,
-        duration: 5000,
+        duration: 8000,
         zoom: 12.5,
+        essential: true,
         // pitch: 75,
       });
     },
