@@ -1,10 +1,19 @@
 <template>
   <div>
-    <div id="map" class="font-poppins min-w-full min-h-screen"></div>
-    <search
-      @search="(items) => addMarkers(items)"
-      @fly="(coordinates) => flyToLocation(coordinates)"
-    />
+    <div :class="selectedUser ? 'brightness-50' : ''">
+      <div id="map" class="font-mulish min-w-full min-h-screen"></div>
+      <search
+        @search="(items) => addMarkers(items)"
+        @fly="(coordinates) => flyToLocation(coordinates)"
+      />
+    </div>
+    <transition>
+      <profile
+        v-if="selectedUser"
+        :user="selectedUser"
+        v-on-clickaway="() => toggleModal(false)"
+      />
+    </transition>
   </div>
 </template>
 
@@ -12,13 +21,15 @@
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Search from "~/components/Search.vue";
+import Profile from "~/components/Profile.vue";
 export default {
-  components: { Search },
+  components: { Search, Profile },
   name: "IndexPage",
   data() {
     return {
       map: {},
       markers: [],
+      selectedUser: false,
     };
   },
   mounted() {
@@ -67,9 +78,10 @@ export default {
         const feat = items.map((item) => {
           // Add an image to use as a custom marker
           this.map.loadImage(
-            `https://ui-avatars.com/api/?background=000&color=fff&name=${
-              item.fullName.split(" ")[0]
-            }+${item.fullName.split(" ")[1]}`,
+            item.photo,
+            // `https://ui-avatars.com/api/?background=000&color=fff&name=${
+            //   item.fullName.split(" ")[0]
+            // }+${item.fullName.split(" ")[1]}`,
             // ${"000000".replace(
             //   /0/g,
             //   function () {
@@ -92,8 +104,14 @@ export default {
               coordinates: [item["location.lng"], item["location.lat"]],
             },
             properties: {
-              title: item.fullName,
+              name: item.fullName,
               icon: item.objectID,
+              logo: item.photo,
+              designation: item.designation,
+              company: item.companyName,
+              location: [item["location.city"], item["location.country"]].join(
+                ", "
+              ),
             },
           };
         });
@@ -103,57 +121,57 @@ export default {
             type: "FeatureCollection",
             features: feat,
           },
-          tolerance: 0,
-          cluster: true,
-          clusterMaxZoom: 14, // Max zoom to cluster points on
-          clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
+          // tolerance: 0,
+          // cluster: true,
+          // clusterMaxZoom: 14, // Max zoom to cluster points on
+          // clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
         });
 
-        this.map.addLayer({
-          id: "clusters",
-          type: "circle",
-          source: "users",
-          filter: ["has", "point_count"],
-          paint: {
-            // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-            // with three steps to implement three types of circles:
-            //   * Blue, 20px circles when point count is less than 100
-            //   * Yellow, 30px circles when point count is between 100 and 750
-            //   * Pink, 40px circles when point count is greater than or equal to 750
-            "circle-color": [
-              "step",
-              ["get", "point_count"],
-              "#7CC6FE",
-              30,
-              "#FCB0B3",
-              60,
-              "#DBD56E",
-            ],
-            "circle-radius": [
-              "step",
-              ["get", "point_count"],
-              20,
-              100,
-              30,
-              750,
-              40,
-            ],
-            "circle-opacity": 0.5,
-          },
-        });
+        // this.map.addLayer({
+        //   id: "clusters",
+        //   type: "circle",
+        //   source: "users",
+        //   filter: ["has", "point_count"],
+        //   paint: {
+        //     // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+        //     // with three steps to implement three types of circles:
+        //     //   * Blue, 20px circles when point count is less than 100
+        //     //   * Yellow, 30px circles when point count is between 100 and 750
+        //     //   * Pink, 40px circles when point count is greater than or equal to 750
+        //     "circle-color": [
+        //       "step",
+        //       ["get", "point_count"],
+        //       "#7CC6FE",
+        //       30,
+        //       "#FCB0B3",
+        //       60,
+        //       "#DBD56E",
+        //     ],
+        //     "circle-radius": [
+        //       "step",
+        //       ["get", "point_count"],
+        //       20,
+        //       100,
+        //       30,
+        //       750,
+        //       40,
+        //     ],
+        //     "circle-opacity": 0.5,
+        //   },
+        // });
 
-        // Add a symbol layer
-        this.map.addLayer({
-          id: "cluster-count",
-          type: "symbol",
-          source: "users",
-          filter: ["has", "point_count"],
-          layout: {
-            "text-field": "{point_count_abbreviated}",
-            "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-            "text-size": 12,
-          },
-        });
+        // // Add a symbol layer
+        // this.map.addLayer({
+        //   id: "cluster-count",
+        //   type: "symbol",
+        //   source: "users",
+        //   filter: ["has", "point_count"],
+        //   layout: {
+        //     "text-field": "{point_count_abbreviated}",
+        //     "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+        //     "text-size": 12,
+        //   },
+        // });
 
         this.map.addLayer({
           id: "unclustered-point",
@@ -163,18 +181,19 @@ export default {
           layout: {
             "icon-image": ["get", "icon"],
             "icon-allow-overlap": true,
-            "icon-size": 0.4,
-            "text-field": ["get", "title"],
+            "icon-size": 0.6,
+            "text-field": ["get", "name"],
             "text-optional": true,
-            "text-size": 12,
-            "text-allow-overlap": true,
-            "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-            "text-offset": [0, 1.5],
+            "text-size": 14,
+            // "text-allow-overlap": true,
+            "text-font": ["Lato Regular", "PT Sans Regular"],
+            "text-offset": [0, 1.3],
             "text-anchor": "top",
           },
           paint: {
-            "icon-opacity": 0.8,
-            "text-opacity": 0.8,
+            "icon-opacity": 0.9,
+            // "text-opacity": 0.8,
+            "text-color": "#1e354d",
             // "text-halo-blur": 1,
             // "text-halo-width": 2,
             // "text-halo-color": "#ffffff",
@@ -202,6 +221,7 @@ export default {
         // Center the map on the coordinates of any clicked circle from the 'users' layer.
         this.map.on("click", "unclustered-point", (e) => {
           this.flyToLocation(e.features[0].geometry.coordinates);
+          this.toggleModal(e.features[0]);
         });
 
         // Change the cursor to a pointer when the it enters a feature in the 'circle' layer.
@@ -219,11 +239,29 @@ export default {
     flyToLocation(coordinates) {
       this.map.flyTo({
         center: coordinates,
-        duration: 8000,
+        duration: 5000,
         zoom: 12.5,
         // pitch: 75,
       });
     },
+
+    toggleModal(f) {
+      console.log(f);
+      this.selectedUser = f;
+    },
   },
 };
 </script>
+
+<style>
+.v-enter-active,
+.v-leave-active {
+  transition: all 2s ease;
+}
+
+.v-enter,
+.v-leave-to {
+  opacity: 0;
+  transform: translateX(100%);
+}
+</style>
