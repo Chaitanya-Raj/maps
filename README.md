@@ -1,69 +1,44 @@
-# maps
+# Frontend Engineering Task | Magik
 
-## Build Setup
+## Technologies Used
 
-```bash
-# install dependencies
-$ npm install
+- MapboxGL
+- Algolia
+- NuxtJS
 
-# serve with hot reload at localhost:3000
-$ npm run dev
+## Objective
 
-# build for production and launch server
-$ npm run build
-$ npm run start
+To create a well integrated map based view of all the members within a community. The view should be interactive and help the user visualize the globalness of the community.
 
-# generate static project
-$ npm run generate
-```
+## Features
 
-For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
+- Allow the user to search through all the member accounts. (implemented)
+- Allow the user to find other members based on company name, designation and location.
+- Allow the user to search community members around him.
+- Display the community members on a map and mark their locations in a comprehensible way. (implemented)
+- Display upcoming events on the dash and on the map (if in person)
+- Allow user to discover similar based on their currently selected user.
+- Allow the user to select whether to view members in a clustered view or as unclustered points.
 
-## Special Directories
+## How it works
 
-You can create the following extra directories, some of which have special behaviors. Only `pages` is required; you can delete them if you don't want to use their functionality.
+The app has two main components:
 
-### `assets`
+- The Search
+- The Map
 
-The assets directory contains your uncompiled assets such as Stylus or Sass files, images, or fonts.
+### The Search
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/assets).
+Search for this app has been powered by Algolia. We build a database of the community members on Algolia which is indexed to provide fast search capabilities. The search provides the user a way to search through the member database and jump to the location of a certain member.
 
-### `components`
+### The Map
 
-The components directory contains your Vue.js components. Components make up the different parts of your page and can be reused and imported into your pages, layouts and even other components.
+The map displays the count and spread of the community members around the world using a visual. Each user appears as an individual marker on the map, which can be focused on. The user can know more about a user by clicking on the pointer and having a quick look at the member profile.
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/components).
+## The Technical Stuff
 
-### `layouts`
+The Dataset for the community members come from the algolia servers, which is then rendered upon the map, showing the users in their accurate locations.
 
-Layouts are a great help when you want to change the look and feel of your Nuxt app, whether you want to include a sidebar or have distinct layouts for mobile and desktop.
+## Designs
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/layouts).
-
-
-### `pages`
-
-This directory contains your application views and routes. Nuxt will read all the `*.vue` files inside this directory and setup Vue Router automatically.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/get-started/routing).
-
-### `plugins`
-
-The plugins directory contains JavaScript plugins that you want to run before instantiating the root Vue.js Application. This is the place to add Vue plugins and to inject functions or constants. Every time you need to use `Vue.use()`, you should create a file in `plugins/` and add its path to plugins in `nuxt.config.js`.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/plugins).
-
-### `static`
-
-This directory contains your static files. Each file inside this directory is mapped to `/`.
-
-Example: `/static/robots.txt` is mapped as `/robots.txt`.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/static).
-
-### `store`
-
-This directory contains your Vuex store files. Creating a file in this directory automatically activates Vuex.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/store).
+## Design Decisions and their pros/cons
