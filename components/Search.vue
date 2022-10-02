@@ -3,7 +3,7 @@
     <ais-instant-search index-name="users" :search-client="searchClient">
       <ais-configure
         :attributesToSnippet="['fullName', 'location.city', 'location.country']"
-        :hits-per-page.camel="500"
+        :hits-per-page.camel="1000"
         snippetEllipsisText="…"
       >
         <ais-autocomplete>
