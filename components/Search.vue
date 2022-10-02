@@ -3,7 +3,7 @@
     <ais-instant-search index-name="users" :search-client="searchClient">
       <ais-configure
         :attributesToSnippet="['fullName', 'location.city', 'location.country']"
-        :hits-per-page.camel="500"
+        :hits-per-page.camel="1000"
         snippetEllipsisText="…"
       >
         <ais-autocomplete>
@@ -14,6 +14,7 @@
               <div class="flex items-center">
                 <img src="search-interface-symbol.png" alt="" class="h-5" />
               </div>
+              <!-- TODO: Make more responsive -->
               <input
                 type="search"
                 :value="currentRefinement"
@@ -32,9 +33,7 @@
                   v-for="hit in index.hits"
                   :key="hit.objectID"
                   class="flex items-center gap-2 mb-4 cursor-pointer"
-                  @click="
-                    $emit('fly', [hit['location.lng'], hit['location.lat']])
-                  "
+                  @click="() => showUser(hit)"
                 >
                   <div class="flex items-center">
                     <!-- :src="`https://ui-avatars.com/api/?background=${'000000'.replace(
@@ -142,6 +141,10 @@ export default {
   methods: {
     getSearchResults(items) {
       this.$emit("search", items);
+    },
+    showUser(hit) {
+      this.$emit("fly", [hit["location.lng"], hit["location.lat"]]);
+      this.$emit("show-modal", hit);
     },
   },
 };

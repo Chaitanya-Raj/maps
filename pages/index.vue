@@ -5,6 +5,7 @@
       <search
         @search="(items) => addMarkers(items)"
         @fly="(coordinates) => flyToLocation(coordinates)"
+        @show-modal="(hit) => toggleModal(hit)"
       />
       <user-count :count="10000" />
     </div>
@@ -74,31 +75,39 @@ export default {
           showUserHeading: true,
         })
       );
+
+      this.map.loadImage(
+        "https://cdn-icons-png.flaticon.com/128/4390/4390411.png",
+        (error, image) => {
+          if (error) console.log(error);
+          this.map.addImage("custom-marker", image);
+        }
+      );
     },
     addMarkers(items) {
       this.map.on("load", () => {
         const feat = items.map((item) => {
           // Add an image to use as a custom marker
-          this.map.loadImage(
-            item.photo,
-            // `https://ui-avatars.com/api/?background=000&color=fff&name=${
-            //   item.fullName.split(" ")[0]
-            // }+${item.fullName.split(" ")[1]}`,
-            // ${"000000".replace(
-            //   /0/g,
-            //   function () {
-            //     return (~~(Math.random() * 16)).toString(16);
-            //   }
-            // )}
-            // `https://xsgames.co/randomusers/assets/avatars/male/${Math.floor(
-            //   Math.random() * 70
-            // )}.jpg`,
-            // "https://thispersondoesnotexist.com/",
-            (error, image) => {
-              if (error) console.log("xD");
-              this.map.addImage(item.objectID, image);
-            }
-          );
+          // this.map.loadImage(
+          //   item.photo,
+          //   // `https://ui-avatars.com/api/?background=000&color=fff&name=${
+          //   //   item.fullName.split(" ")[0]
+          //   // }+${item.fullName.split(" ")[1]}`,
+          //   // ${"000000".replace(
+          //   //   /0/g,
+          //   //   function () {
+          //   //     return (~~(Math.random() * 16)).toString(16);
+          //   //   }
+          //   // )}
+          //   // `https://xsgames.co/randomusers/assets/avatars/male/${Math.floor(
+          //   //   Math.random() * 70
+          //   // )}.jpg`,
+          //   // "https://thispersondoesnotexist.com/",
+          //   (error, image) => {
+          //     if (error) console.log(error);
+          //     this.map.addImage(item.objectID, image);
+          //   }
+          // );
           return {
             type: "Feature",
             geometry: {
@@ -107,13 +116,8 @@ export default {
             },
             properties: {
               name: item.fullName,
-              icon: item.objectID,
-              logo: item.photo,
-              designation: item.designation,
-              company: item.companyName,
-              location: [item["location.city"], item["location.country"]].join(
-                ", "
-              ),
+              // icon: item.objectID,
+              objectID: item.objectID,
             },
           };
         });
@@ -181,9 +185,9 @@ export default {
           source: "users",
           filter: ["!", ["has", "point_count"]],
           layout: {
-            "icon-image": ["get", "icon"],
+            "icon-image": "custom-marker",
             "icon-allow-overlap": true,
-            "icon-size": 0.6,
+            "icon-size": 0.2,
             "text-field": ["get", "name"],
             "text-optional": true,
             "text-size": 14,
@@ -203,27 +207,31 @@ export default {
         });
 
         // inspect a cluster on click
-        this.map.on("click", "clusters", (e) => {
-          const features = map.queryRenderedFeatures(e.point, {
-            layers: ["clusters"],
-          });
-          const clusterId = features[0].properties.cluster_id;
-          this.map
-            .getSource("earthquakes")
-            .getClusterExpansionZoom(clusterId, (err, zoom) => {
-              if (err) return;
+        // this.map.on("click", "clusters", (e) => {
+        //   const features = map.queryRenderedFeatures(e.point, {
+        //     layers: ["clusters"],
+        //   });
+        //   const clusterId = features[0].properties.cluster_id;
+        //   this.map
+        //     .getSource("users")
+        //     .getClusterExpansionZoom(clusterId, (err, zoom) => {
+        //       if (err) return;
 
-              this.map.easeTo({
-                center: features[0].geometry.coordinates,
-                zoom: zoom,
-              });
-            });
-        });
+        //       this.map.easeTo({
+        //         center: features[0].geometry.coordinates,
+        //         zoom: zoom,
+        //       });
+        //     });
+        // });
 
         // Center the map on the coordinates of any clicked circle from the 'users' layer.
         this.map.on("click", "unclustered-point", (e) => {
           this.flyToLocation(e.features[0].geometry.coordinates);
-          this.toggleModal(e.features[0]);
+          this.toggleModal(
+            items.find(
+              (item) => item.objectID === e.features[0].properties.objectID
+            )
+          );
         });
 
         // Change the cursor to a pointer when the it enters a feature in the 'circle' layer.

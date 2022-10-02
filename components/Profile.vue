@@ -7,19 +7,28 @@
         <!-- :src="`https://ui-avatars.com/api/?background=000&color=fff&name=${
             user.properties.title.split(' ')[0]
           }+${user.properties.title.split(' ')[1]}`" -->
-        <img :src="user.properties.logo" alt="" class="w-20 rounded-full" />
+        <img :src="user.photo" alt="" class="w-20 rounded-full" />
       </div>
       <div class="flex flex-col">
         <span class="font-mulish text-xl font-semibold">{{
-          user.properties.name
+          user.fullName
         }}</span>
         <span class="font-lato"
-          >{{ user.properties.designation }} at
-          {{ user.properties.company }}</span
+          >{{ user.designation }} at {{ user.companyName }}</span
         >
-        <span class="font-lato mt-2 text-sm">{{
-          user.properties.location
-        }}</span>
+        <div class="flex items-center gap-2 mt-1">
+          <div class="flex items-center w-6">
+            <img
+              src="https://cdn-icons-png.flaticon.com/128/2113/2113178.png"
+              alt=""
+              class="w-full"
+            />
+          </div>
+
+          <span class="font-lato text-sm"
+            >{{ user["location.city"] }}, {{ user["location.country"] }}</span
+          >
+        </div>
       </div>
     </div>
     <div class="flex flex-col mt-5">
