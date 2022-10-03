@@ -5,6 +5,9 @@ export default {
   generate: {
     fallback: true,
   },
+  router: {
+    base: "/maps/",
+  },
   head: {
     title: "maps",
     htmlAttrs: {
