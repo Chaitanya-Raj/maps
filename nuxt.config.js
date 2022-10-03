@@ -41,7 +41,7 @@ export default {
   modules: [],
 
   publicRuntimeConfig: {
-    APP_ID: process.env.API_ID,
+    APP_ID: process.env.APP_ID,
     SEARCH_API_KEY: process.env.SEARCH_API_KEY,
     MAPBOX_API_KEY: process.env.MAPBOX_API_KEY,
   },
