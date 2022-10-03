@@ -46,9 +46,61 @@ The Dataset for the community members come from the algolia servers, which is th
 
 Community members can be shown in the overworld view in 3 main ways:
 
-1. Using individual custom icons
-   [custom-icon](/designs/custom-icons.png)
-2. Using clusters at lower zoom levels
-   [clustered](/designs/clustered.png)
-3. Using a small set of common icons
-   [unclustered](/designs/unclustered.png)
+### Default View
+
+#### Using a small set of common icons
+
+![unclustered](/designs/unclustered.png)
+
+- Advantages
+  - No need to load a large amount of images, saving time and bandwidth
+- Cons
+  - Lack of individuality at a glance
+
+#### Using clusters at lower zoom levels
+
+![clustered](/designs/clustered.png)
+
+- Advantages
+
+  - Clean and concise view
+
+- Cons
+  - Lack of visible scale
+
+#### Using individual custom icons
+
+![custom-icon](/designs/custom-icons.png)
+
+- Advantages
+
+  - Individual members are well represented on the map
+
+- Cons
+  - Has a large memory and time overhead
+
+### User location
+
+![](/designs/user-location.png)
+
+### Search Filters
+
+![](/designs/search-filters.png)
+
+### User Profile
+
+##### Simplified Design with Alternate Color Scheme
+
+![](/designs/profile-1-alt.png)
+
+##### Simplified Design
+
+![](/designs/profile-1.png)
+
+##### Alternate Design 1 (shows more information about the user)
+
+![](/designs/profile-2.png)
+
+##### Alternate Design 2 (shows more information about the user)
+
+![](/designs/profile-3.png)
