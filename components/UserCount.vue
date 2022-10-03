@@ -1,6 +1,6 @@
 <template>
   <div
-    class="py-2 px-4 bg-[#f8f8f8] flex justify-between items-center rounded-lg opacity-90 gap-6 shadow-lg flex-row-reverse"
+    class="bg-offWhite opacity-90 flex flex-row-reverse items-center justify-between gap-6 px-4 py-2 rounded-lg shadow-lg"
   >
     <p class="font-mulish text-lg font-semibold">
       {{ formattedCount }} Members

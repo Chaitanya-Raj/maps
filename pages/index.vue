@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div :class="selectedUser ? 'brightness-50' : ''">
+    <div class="transition-all" :class="selectedUser ? 'brightness-50' : ''">
       <div id="map" class="font-mulish min-w-full min-h-screen"></div>
 
-      <div class="bottom-8 right-2 fixed flex flex-col items-end gap-2">
+      <div class="bottom-6 right-2 fixed flex flex-col items-end gap-2">
         <user-count :count="memberCount" />
         <brand-tag />
       </div>
@@ -216,7 +216,7 @@ export default {
             "text-anchor": "top",
           },
           paint: {
-            "icon-opacity": 0.9,
+            "icon-opacity": 0.7,
             // "text-opacity": 0.8,
             "text-color": "#1e354d",
             // "text-halo-blur": 1,
@@ -224,6 +224,20 @@ export default {
             // "text-halo-color": "#ffffff",
           },
         });
+
+        // const filtered = feat.map((f) => f.properties.name.includes("Jeremy"));
+        // console.log(filtered);
+
+        // // filter features based on search query
+        // map.setFilter("unclustered-point", [
+        //   "match",
+        //   ["get", "name"],
+        //   filtered.map((feature) => {
+        //     return feature.properties.name;
+        //   }),
+        //   true,
+        //   false,
+        // ]);
 
         // Center the map on the coordinates of any clicked circle from the 'users' layer.
         this.map.on("click", "unclustered-point", (e) => {
@@ -275,5 +289,9 @@ export default {
 .v-leave-to {
   opacity: 0;
   transform: translateX(100%);
+}
+
+.mapboxgl-ctrl-bottom-right {
+  font-size: 10px;
 }
 </style>

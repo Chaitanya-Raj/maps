@@ -9,7 +9,7 @@
         <ais-autocomplete>
           <template v-slot="{ currentRefinement, indices, refine }">
             <div
-              class="rounded-lg opacity-90 flex p-4 transition-all bg-[#fbfbfb] shadow-lg"
+              class="opacity-90 bg-offWhite flex p-4 transition-all rounded-lg shadow-lg"
             >
               <div class="flex items-center">
                 <img src="search-interface-symbol.png" alt="" class="h-5" />
@@ -20,14 +20,14 @@
                 :value="currentRefinement"
                 placeholder="Search Members"
                 @input="refine($event.currentTarget.value)"
-                class="font-mulish w-full ml-4 outline-none opacity-100 bg-[#fbfbfb] transition-all"
+                class="font-mulish bg-offWhite w-full ml-4 transition-all outline-none opacity-100"
               />
             </div>
             <template v-if="currentRefinement">
               <ul
                 v-for="index in indices"
                 :key="index.indexId"
-                class="max-h-96 opacity-90 p-4 my-2 overflow-y-scroll bg-[#fbfbfb] rounded-lg shadow-lg scroll-smooth transition-all"
+                class="max-h-96 opacity-90 bg-offWhite scroll-smooth p-4 my-2 overflow-y-scroll transition-all rounded-lg shadow-lg"
               >
                 <li
                   v-for="hit in index.hits"

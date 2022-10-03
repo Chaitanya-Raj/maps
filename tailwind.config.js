@@ -8,6 +8,9 @@ module.exports = {
         mulish: ["Mulish", "sans-serif"],
         lato: ["Lato", "sans-serif"],
       },
+      colors: {
+        offWhite: "#fbfbfb",
+      },
     },
   },
   variants: {
