@@ -1,6 +1,6 @@
 <template>
   <div
-    class="md:right-12 top-6 p-7 max-h-[700px] overflow-y-auto fixed flex flex-col max-w-lg bg-offWhite rounded-xl shadow-lg opacity-90"
+    class="md:right-12 md:mx-0 mx-4 top-6 p-7 max-h-[700px] overflow-y-auto fixed flex flex-col max-w-lg bg-offWhite rounded-xl shadow-lg opacity-90"
   >
     <div class="flex gap-5">
       <div>

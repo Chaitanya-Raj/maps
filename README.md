@@ -12,13 +12,16 @@ To create a well integrated map based view of all the members within a community
 
 ## Features
 
-- Allow the user to search through all the member accounts. (implemented)
-- Allow the user to find other members based on company name, designation and location.
-- Allow the user to search community members around him.
-- Display the community members on a map and mark their locations in a comprehensible way. (implemented)
+- Allow the user to search through all the members of the community.
+- Display the community members on a map and mark their locations in a comprehensible way.
+- Allow the user to explore his location and discover new users around them.
+
+### Proposed Features
+
 - Display upcoming events on the dash and on the map (if in person)
 - Allow user to discover similar users based on their currently selected user.
 - Allow the user to select whether to view members in a clustered view or as unclustered points.
+- Allow the user to find other members based on company name, designation and location.
 
 ## How it works
 
@@ -39,6 +42,13 @@ The map displays the count and spread of the community members around the world 
 
 The Dataset for the community members come from the algolia servers, which is then rendered upon the map, showing the users in their accurate locations.
 
-## Designs
+## Design
 
-## Design Decisions and their pros/cons
+Community members can be shown in the overworld view in 3 main ways:
+
+1. Using individual custom icons
+   [custom-icon](/designs/custom-icons.png)
+2. Using clusters at lower zoom levels
+   [clustered](/designs/clustered.png)
+3. Using a small set of common icons
+   [unclustered](/designs/unclustered.png)
