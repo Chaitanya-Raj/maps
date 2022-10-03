@@ -10,7 +10,6 @@
               <div class="flex items-center">
                 <img src="search-interface-symbol.png" alt="" class="h-5" />
               </div>
-              <!-- TODO: Make more responsive -->
               <input
                 type="search"
                 :value="currentRefinement"
@@ -122,7 +121,6 @@
 import algoliaSearch from "algoliasearch/lite";
 
 // configurations for Algolia search
-
 export default {
   data() {
     return {
@@ -132,6 +130,7 @@ export default {
   },
   mounted() {
     const index = this.searchClient.initIndex("users");
+
     // Get all records as an iterator
     index
       .search("", {

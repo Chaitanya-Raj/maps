@@ -5,6 +5,7 @@
 - MapboxGl
 - Algolia (to fetch member details)
 - NuxtJS
+- Figma (for design)
 
 ## Objective
 
@@ -31,7 +32,7 @@ The app has two main components:
 
 ### The Search
 
-Search for this app has been powered by Algolia. We build a database of the community members on Algolia which is indexed to provide fast search capabilities. The search provides the user a way to search through the member database and jump to the location of a certain member.
+Search for this app has been powered by Algolia and implemented with Vue-InstantSearch. We build a database of the community members on Algolia which is indexed to provide fast search capabilities. The search provides the user a way to search through the member database and jump to the location of a certain member.
 
 ### The Map
 
@@ -57,6 +58,8 @@ The points can be placed on the map using a Symbol Layer. It provides a speedup 
 
 ![unclustered](/designs/unclustered.png)
 
+Reference: https://docs.mapbox.com/mapbox-gl-js/example/geojson-markers/
+
 - Advantages
   - All the user images don't need to be loaded into mapbox, thus decreasing the map load time.
   - As the icons don't take up much space, and the text is visible only when the space is available, it looks relatively uncluttered.
@@ -66,6 +69,8 @@ The points can be placed on the map using a Symbol Layer. It provides a speedup 
 #### Using clusters at lower zoom levels
 
 ![clustered](/designs/clustered.png)
+
+Reference: https://docs.mapbox.com/mapbox-gl-js/example/cluster/
 
 - Advantages
 
@@ -91,11 +96,15 @@ Keeping the performance in mind, I've used the unclustered point view with a com
 
 ### User location
 
+Reference: https://docs.mapbox.com/mapbox-gl-js/example/locate-user/
+
 The user's current location can be identified and the user can explore and find users near their location.
 
 ![](/designs/user-location.png)
 
 ### Search Filters (Concept)
+
+Reference: https://www.algolia.com/doc/guides/managing-results/refine-results/filtering/
 
 Filters can be added to the search query search for that keyword in a specific category i.e. company name, job title, city or country.
 
