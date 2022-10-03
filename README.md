@@ -8,21 +8,21 @@
 
 ## Objective
 
-To create a well integrated map based view of all the members within a community. The view should be interactive and help the user visualize the globalness of the community.
+To create a well integrated map based view of all the members within a community. The view should be informative and interactive and help the user visualize the globalness of the community.
 
 ## Features
 
 - A list of members laid out on top of the Map.
 - Search to allow members to find fellow community members
 
-### Proposed Features
+### Features that can be added
 
-- Display upcoming events on the dash and on the map (if in person)
 - Allow user to discover similar users based on their currently selected user.
-- Allow the user to select whether to view members in a clustered view or as unclustered points.
 - Allow the user to find other members based on company name, designation and location.
+- Display upcoming events on the dash and on the map (if is an in-person meetup)
+- Allow the user to select whether to view members in a clustered view or as unclustered points.
 
-## How it works
+## Components
 
 The app has two main components:
 
@@ -35,11 +35,13 @@ Search for this app has been powered by Algolia. We build a database of the comm
 
 ### The Map
 
-The map displays the count and spread of the community members around the world using a visual. Each user appears as an individual marker on the map, which can be focused on. The user can know more about a user by clicking on the pointer and having a quick look at the member profile.
+The map displays and helps in visualizing the number and spread of the community members around the world. Each user appears as an individual marker on the map, which can be focused on. The user can know more about a user by clicking on the marker and having a quick look at the member profile.
 
-## The Technical Stuff
+## How it works
 
-The Dataset for the community members come from the algolia servers, which is then rendered upon the map, showing the users in their accurate locations.
+The records for the community members are stored inside an index in Algolia, on which we perform the search. The received results of the search is then rendered upon the map as a symbol layer, with each member being represented by a feature on the map. As we keep refining the search, the layer is redrawn to display the up to date results.
+
+A single icon has been used to mark an individual member on the map. A small set of icons can be used if there are multiple types of users i.e. admins, moderators and normal users.
 
 ## Design
 
@@ -56,9 +58,10 @@ The points can be placed on the map using a Symbol Layer. It provides a speedup 
 ![unclustered](/designs/unclustered.png)
 
 - Advantages
-  - No need to load a large amount of images, saving time and bandwidth
+  - All the user images don't need to be loaded into mapbox, thus decreasing the map load time.
+  - As the icons don't take up much space, and the text is visible only when the space is available, it looks relatively uncluttered.
 - Cons
-  - Lack of individuality at a glance
+  - Lack of individuality at a glance.
 
 #### Using clusters at lower zoom levels
 
@@ -66,10 +69,11 @@ The points can be placed on the map using a Symbol Layer. It provides a speedup 
 
 - Advantages
 
-  - Clean and concise view
+  - Clean and concise view.
+  - Prevents overlap of icons and text.
 
 - Cons
-  - Lack of visible scale
+  - Lack of information about individual users at a glance.
 
 #### Using individual custom icons
 
@@ -77,20 +81,29 @@ The points can be placed on the map using a Symbol Layer. It provides a speedup 
 
 - Advantages
 
-  - Individual members are well represented on the map
+  - Individual members are well represented on the map.
 
 - Cons
-  - Has a large memory and time overhead
+  - Each icon has to be individually loaded into mapbox, thus increasing the load time
+  - Lots of network requests need to be made in the case of large number of users.
+
+Keeping the performance in mind, I've used the unclustered point view with a common icon.
 
 ### User location
 
+The user's current location can be identified and the user can explore and find users near their location.
+
 ![](/designs/user-location.png)
 
-### Search Filters
+### Search Filters (Concept)
+
+Filters can be added to the search query search for that keyword in a specific category i.e. company name, job title, city or country.
 
 ![](/designs/search-filters.png)
 
 ### User Profile
+
+On interacting with either a search result or a marker, the user can view the profile of the selected member.
 
 ##### Simplified Design with Alternate Color Scheme
 

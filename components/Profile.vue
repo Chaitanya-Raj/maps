@@ -4,11 +4,13 @@
   >
     <div class="flex gap-5">
       <div>
-        <!-- :src="`https://ui-avatars.com/api/?background=000&color=fff&name=${
-            user.properties.title.split(' ')[0]
-          }+${user.properties.title.split(' ')[1]}`" -->
-        <img
+        <!-- 
           :src="user.photo"
+         -->
+        <img
+          :src="`https://ui-avatars.com/api/?background=000&color=fff&name=${
+            user.fullName.split(' ')[0]
+          }+${user.fullName.split(' ')[1]}`"
           alt=""
           class="w-20 rounded-full cursor-pointer"
         />

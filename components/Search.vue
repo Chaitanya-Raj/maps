@@ -32,16 +32,18 @@
                   @click="() => showUser(hit)"
                 >
                   <div class="flex items-center">
-                    <!-- :src="`https://ui-avatars.com/api/?background=${'000000'.replace(
+                    <!-- 
+                      :src="hit.photo"
+                     -->
+                    <img
+                      :src="`https://ui-avatars.com/api/?background=${'000000'.replace(
                         /0/g,
                         function () {
                           return (~~(Math.random() * 16)).toString(16);
                         }
                       )}&color=fff&name=${hit.fullName.split(' ')[0]}+${
                         hit.fullName.split(' ')[1]
-                      }`" -->
-                    <img
-                      :src="hit.photo"
+                      }`"
                       alt=""
                       class="w-12 rounded-full opacity-100"
                     />
