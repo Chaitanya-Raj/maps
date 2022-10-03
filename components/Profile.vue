@@ -14,9 +14,10 @@
         />
       </div>
       <div class="flex flex-col">
-        <span class="font-mulish text-xl font-semibold cursor-pointer">{{
-          user.fullName
-        }}</span>
+        <span
+          class="font-mulish md:text-xl text-lg font-semibold cursor-pointer"
+          >{{ user.fullName }}</span
+        >
         <span class="font-lato"
           >{{ user.designation }} at {{ user.companyName }}</span
         >

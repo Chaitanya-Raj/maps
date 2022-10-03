@@ -1,5 +1,5 @@
 <template>
-  <div class="top-5 left-5 w-96 fixed">
+  <div class="top-5 left-5 w-80 fixed">
     <ais-instant-search index-name="users" :search-client="searchClient">
       <ais-configure :hits-per-page.camel="1000" snippetEllipsisText="…">
         <ais-autocomplete>
@@ -47,8 +47,8 @@
                     />
                   </div>
                   <p class="font-mulish flex flex-col opacity-100">
-                    <span class="text-lg">{{ hit.fullName }}</span>
-                    <span class="text-gray-600"
+                    <span class="md:text-lg">{{ hit.fullName }}</span>
+                    <span class="md:text-base text-sm text-gray-600"
                       >{{ hit.location.city }}, {{ hit.location.country }}</span
                     >
                   </p>
