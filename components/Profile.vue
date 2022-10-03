@@ -7,16 +7,20 @@
         <!-- :src="`https://ui-avatars.com/api/?background=000&color=fff&name=${
             user.properties.title.split(' ')[0]
           }+${user.properties.title.split(' ')[1]}`" -->
-        <img :src="user.photo" alt="" class="w-20 rounded-full" />
+        <img
+          :src="user.photo"
+          alt=""
+          class="w-20 rounded-full cursor-pointer"
+        />
       </div>
       <div class="flex flex-col">
-        <span class="font-mulish text-xl font-semibold">{{
+        <span class="font-mulish text-xl font-semibold cursor-pointer">{{
           user.fullName
         }}</span>
         <span class="font-lato"
           >{{ user.designation }} at {{ user.companyName }}</span
         >
-        <div class="flex items-center gap-2 mt-1">
+        <div class="flex items-center gap-2 mt-1 cursor-pointer">
           <div class="flex items-center w-6">
             <img
               src="https://cdn-icons-png.flaticon.com/128/2113/2113178.png"
@@ -26,7 +30,7 @@
           </div>
 
           <span class="font-lato text-sm"
-            >{{ user["location.city"] }}, {{ user["location.country"] }}</span
+            >{{ user.location.city }}, {{ user.location.country }}</span
           >
         </div>
       </div>
@@ -34,10 +38,8 @@
     <div class="flex flex-col mt-5">
       <span class="font-mulish text-lg font-semibold">About Me</span
       ><span class="font-lato mt-2"
-        >Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi
-        saepe veritatis velit cum, error porro blanditiis. Amet sapiente fugit
-        nihil laboriosam earum modi nobis ipsa incidunt eum culpa? Sunt,
-        ea?</span
+        >Travel fanatic. Creator. Troublemaker. Friend of animals everywhere.
+        Food expert. Falls down a lot.</span
       >
     </div>
   </div>

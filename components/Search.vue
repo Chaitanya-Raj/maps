@@ -1,11 +1,7 @@
 <template>
   <div class="top-5 left-5 w-96 fixed">
     <ais-instant-search index-name="users" :search-client="searchClient">
-      <ais-configure
-        :attributesToSnippet="['fullName', 'location.city', 'location.country']"
-        :hits-per-page.camel="1000"
-        snippetEllipsisText="…"
-      >
+      <ais-configure :hits-per-page.camel="1000" snippetEllipsisText="…">
         <ais-autocomplete>
           <template v-slot="{ currentRefinement, indices, refine }">
             <div
@@ -53,8 +49,7 @@
                   <p class="font-mulish flex flex-col opacity-100">
                     <span class="text-lg">{{ hit.fullName }}</span>
                     <span class="text-gray-600"
-                      >{{ hit["location.city"] }},
-                      {{ hit["location.country"] }}</span
+                      >{{ hit.location.city }}, {{ hit.location.country }}</span
                     >
                   </p>
                 </li>
@@ -133,18 +128,29 @@ export default {
       searchKey: this.$config.SEARCH_API_KEY,
     };
   },
+  mounted() {
+    const index = this.searchClient.initIndex("users");
+    // Get all records as an iterator
+    index
+      .search("", {
+        hitsPerPage: 1000,
+      })
+      .then(({ hits }) => {
+        this.$emit("add-markers", hits);
+      });
+  },
   computed: {
     searchClient() {
       return algoliaSearch(this.appID, this.searchKey);
     },
   },
   methods: {
-    getSearchResults(items) {
-      this.$emit("search", items);
-    },
     showUser(hit) {
-      this.$emit("fly", [hit["location.lng"], hit["location.lat"]]);
+      this.$emit("fly", [hit._geoloc.lng, hit._geoloc.lat]);
       this.$emit("show-modal", hit);
+    },
+    getSearchResults(items) {
+      this.$emit("update-markers", items);
     },
   },
 };

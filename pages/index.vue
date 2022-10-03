@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="transition-all" :class="selectedUser ? 'brightness-50' : ''">
+    <div class="transition-all" :class="selectedUser ? 'brightness-75' : ''">
       <div id="map" class="font-mulish min-w-full min-h-screen"></div>
 
       <div class="bottom-6 right-2 fixed flex flex-col items-end gap-2">
@@ -9,9 +9,10 @@
       </div>
     </div>
     <search
-      @search="(items) => addMarkers(items)"
+      @add-markers="(items) => addMarkers(items)"
       @fly="(coordinates) => flyToLocation(coordinates)"
       @show-modal="(hit) => toggleModal(hit)"
+      @update-markers="(items) => updateMarkers(items)"
     />
     <transition>
       <profile
@@ -94,172 +95,171 @@ export default {
     },
     addMarkers(items) {
       this.memberCount = items.length;
+
       this.map.on("load", () => {
-        const feat = items.map((item) => {
-          return {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: [item["location.lng"], item["location.lat"]],
-            },
-            properties: {
-              name: item.fullName,
-              objectID: item.objectID,
-            },
-          };
-        });
-        this.map.addSource("users", {
-          type: "geojson",
-          data: {
-            type: "FeatureCollection",
-            features: feat,
+        this.updateMarkers(items);
+      });
+    },
+
+    updateMarkers(items) {
+      if (this.map.getLayer("unclustered-point")) {
+        this.map.removeLayer("unclustered-point");
+      }
+      if (this.map.getSource("users")) {
+        this.map.removeSource("users");
+      }
+      const feat = items.map((item) => {
+        return {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [item._geoloc.lng, item._geoloc.lat],
           },
-          tolerance: 0,
-          cluster: this.showClustered,
-          clusterMaxZoom: 14, // Max zoom to cluster points on
-          clusterRadius: 40, // Radius of each cluster when clustering points (defaults to 50)
+          properties: {
+            name: item.fullName,
+            gender: item.gender,
+            company: item.companyName,
+            designation: item.designation,
+            city: item.location.city,
+            country: item.location.city,
+            objectID: item.objectID,
+          },
+        };
+      });
+      this.map.addSource("users", {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: feat,
+        },
+        tolerance: 0,
+        cluster: this.showClustered,
+        clusterMaxZoom: 14, // Max zoom to cluster points on
+        clusterRadius: 40, // Radius of each cluster when clustering points (defaults to 50)
+      });
+
+      if (this.showClustered) {
+        console.log("cluster");
+        this.map.addLayer({
+          id: "clusters",
+          type: "circle",
+          source: "users",
+          filter: ["has", "point_count"],
+          paint: {
+            // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+            // with three steps to implement three types of circles:
+            //   * Blue, 20px circles when point count is less than 100
+            //   * Yellow, 30px circles when point count is between 100 and 750
+            //   * Pink, 40px circles when point count is greater than or equal to 750
+            "circle-color": [
+              "step",
+              ["get", "point_count"],
+              "#7CC6FE",
+              30,
+              "#FCB0B3",
+              60,
+              "#DBD56E",
+            ],
+            "circle-radius": [
+              "step",
+              ["get", "point_count"],
+              20,
+              100,
+              30,
+              750,
+              40,
+            ],
+            "circle-opacity": 0.5,
+          },
         });
 
-        if (this.showClustered) {
-          console.log("cluster");
-          this.map.addLayer({
-            id: "clusters",
-            type: "circle",
-            source: "users",
-            filter: ["has", "point_count"],
-            paint: {
-              // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-              // with three steps to implement three types of circles:
-              //   * Blue, 20px circles when point count is less than 100
-              //   * Yellow, 30px circles when point count is between 100 and 750
-              //   * Pink, 40px circles when point count is greater than or equal to 750
-              "circle-color": [
-                "step",
-                ["get", "point_count"],
-                "#7CC6FE",
-                30,
-                "#FCB0B3",
-                60,
-                "#DBD56E",
-              ],
-              "circle-radius": [
-                "step",
-                ["get", "point_count"],
-                20,
-                100,
-                30,
-                750,
-                40,
-              ],
-              "circle-opacity": 0.5,
-            },
-          });
-
-          // Add a symbol layer
-          this.map.addLayer({
-            id: "cluster-count",
-            type: "symbol",
-            source: "users",
-            filter: ["has", "point_count"],
-            layout: {
-              "text-field": "{point_count_abbreviated}",
-              "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-              "text-size": 12,
-            },
-          });
-
-          // inspect a cluster on click
-          this.map.on("click", "clusters", (e) => {
-            const features = this.map.queryRenderedFeatures(e.point, {
-              layers: ["clusters"],
-            });
-            const clusterId = features[0].properties.cluster_id;
-            this.map
-              .getSource("users")
-              .getClusterExpansionZoom(clusterId, (err, zoom) => {
-                if (err) return;
-                console.log(features[0]);
-                this.map.easeTo({
-                  center: features[0].geometry.coordinates,
-                  zoom: zoom,
-                });
-              });
-          });
-
-          // Change the cursor to a pointer when the it enters a feature in the 'circle' layer.
-          this.map.on("mouseenter", "clusters", () => {
-            this.map.getCanvas().style.cursor = "pointer";
-          });
-
-          // Change it back to a pointer when it leaves.
-          this.map.on("mouseleave", "clusters", () => {
-            this.map.getCanvas().style.cursor = "";
-          });
-        }
-
-        // Add individual points
+        // Add a symbol layer
         this.map.addLayer({
-          id: "unclustered-point",
+          id: "cluster-count",
           type: "symbol",
           source: "users",
-          filter: ["!", ["has", "point_count"]],
+          filter: ["has", "point_count"],
           layout: {
-            "icon-image": "custom-marker",
-            "icon-allow-overlap": true,
-            "icon-size": 0.2,
-            "text-field": ["get", "name"],
-            "text-optional": true,
-            "text-size": 14,
-            // "text-allow-overlap": true,
-            "text-font": ["Lato Regular", "PT Sans Regular"],
-            "text-offset": [0, 1.3],
-            "text-anchor": "top",
-          },
-          paint: {
-            "icon-opacity": 0.7,
-            // "text-opacity": 0.8,
-            "text-color": "#1e354d",
-            // "text-halo-blur": 1,
-            // "text-halo-width": 2,
-            // "text-halo-color": "#ffffff",
+            "text-field": "{point_count_abbreviated}",
+            "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+            "text-size": 12,
           },
         });
 
-        // const filtered = feat.map((f) => f.properties.name.includes("Jeremy"));
-        // console.log(filtered);
-
-        // // filter features based on search query
-        // map.setFilter("unclustered-point", [
-        //   "match",
-        //   ["get", "name"],
-        //   filtered.map((feature) => {
-        //     return feature.properties.name;
-        //   }),
-        //   true,
-        //   false,
-        // ]);
-
-        // Center the map on the coordinates of any clicked circle from the 'users' layer.
-        this.map.on("click", "unclustered-point", (e) => {
-          this.flyToLocation(e.features[0].geometry.coordinates);
-          this.toggleModal(
-            items.find(
-              (item) => item.objectID === e.features[0].properties.objectID
-            )
-          );
+        // inspect a cluster on click
+        this.map.on("click", "clusters", (e) => {
+          const features = this.map.queryRenderedFeatures(e.point, {
+            layers: ["clusters"],
+          });
+          const clusterId = features[0].properties.cluster_id;
+          this.map
+            .getSource("users")
+            .getClusterExpansionZoom(clusterId, (err, zoom) => {
+              if (err) return;
+              console.log(features[0]);
+              this.map.easeTo({
+                center: features[0].geometry.coordinates,
+                zoom: zoom,
+              });
+            });
         });
 
         // Change the cursor to a pointer when the it enters a feature in the 'circle' layer.
-        this.map.on("mouseenter", "unclustered-point", () => {
+        this.map.on("mouseenter", "clusters", () => {
           this.map.getCanvas().style.cursor = "pointer";
         });
 
         // Change it back to a pointer when it leaves.
-        this.map.on("mouseleave", "unclustered-point", () => {
+        this.map.on("mouseleave", "clusters", () => {
           this.map.getCanvas().style.cursor = "";
         });
+      }
+
+      // Add individual points
+      this.map.addLayer({
+        id: "unclustered-point",
+        type: "symbol",
+        source: "users",
+        filter: ["!", ["has", "point_count"]],
+        layout: {
+          "icon-image": "custom-marker",
+          "icon-allow-overlap": true,
+          "icon-size": 0.2,
+          "text-field": ["get", "name"],
+          "text-optional": true,
+          "text-size": 14,
+          // "text-allow-overlap": true,
+          "text-font": ["Lato Regular", "PT Sans Regular"],
+          "text-offset": [0, 1.3],
+          "text-anchor": "top",
+        },
+        paint: {
+          "icon-opacity": 0.7,
+          "text-color": "#1e354d",
+        },
+      });
+
+      // Center the map on the coordinates of any clicked circle from the 'users' layer.
+      this.map.on("click", "unclustered-point", (e) => {
+        this.flyToLocation(e.features[0].geometry.coordinates);
+        this.toggleModal(
+          items.find(
+            (item) => item.objectID === e.features[0].properties.objectID
+          )
+        );
+      });
+
+      // Change the cursor to a pointer when the it enters a feature in the 'circle' layer.
+      this.map.on("mouseenter", "unclustered-point", () => {
+        this.map.getCanvas().style.cursor = "pointer";
+      });
+
+      // Change it back to a pointer when it leaves.
+      this.map.on("mouseleave", "unclustered-point", () => {
+        this.map.getCanvas().style.cursor = "";
       });
     },
+
     //Can be removed to improve performance
     flyToLocation(coordinates) {
       this.map.flyTo({
@@ -272,7 +272,6 @@ export default {
     },
 
     toggleModal(f) {
-      console.log(f);
       this.selectedUser = f;
     },
   },

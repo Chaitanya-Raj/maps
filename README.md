@@ -1,4 +1,4 @@
-# Frontend Engineering Task | Magik
+# Frontend Engineering Task | Maps
 
 ## Technologies Used
 
@@ -17,7 +17,7 @@ To create a well integrated map based view of all the members within a community
 - Allow the user to search community members around him.
 - Display the community members on a map and mark their locations in a comprehensible way. (implemented)
 - Display upcoming events on the dash and on the map (if in person)
-- Allow user to discover similar based on their currently selected user.
+- Allow user to discover similar users based on their currently selected user.
 - Allow the user to select whether to view members in a clustered view or as unclustered points.
 
 ## How it works
