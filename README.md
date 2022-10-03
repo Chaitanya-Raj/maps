@@ -2,8 +2,8 @@
 
 ## Technologies Used
 
-- MapboxGL
-- Algolia
+- MapboxGl
+- Algolia (to fetch member details)
 - NuxtJS
 
 ## Objective
@@ -12,9 +12,8 @@ To create a well integrated map based view of all the members within a community
 
 ## Features
 
-- Allow the user to search through all the members of the community.
-- Display the community members on a map and mark their locations in a comprehensible way.
-- Allow the user to explore his location and discover new users around them.
+- A list of members laid out on top of the Map.
+- Search to allow members to find fellow community members
 
 ### Proposed Features
 
@@ -47,6 +46,10 @@ The Dataset for the community members come from the algolia servers, which is th
 Community members can be shown in the overworld view in 3 main ways:
 
 ### Default View
+
+Markers can be used to create more interactive and custom styled points on the map, but it comes with a significant overhead and slows down the app to a significant degree.
+
+The points can be placed on the map using a Symbol Layer. It provides a speedup to the app but gives up the ability to customize individual markers to a great extent.
 
 #### Using a small set of common icons
 

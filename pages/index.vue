@@ -7,6 +7,9 @@
         <user-count :count="memberCount" />
         <brand-tag />
       </div>
+      <div class="bottom-12 left-5 fixed flex flex-col items-end gap-2">
+        <view-toggle />
+      </div>
     </div>
     <search
       @add-markers="(items) => addMarkers(items)"
@@ -62,7 +65,7 @@ export default {
         // style: "mapbox://styles/chaitanyaraj/cl8lvjgqa000m15nt3i9wihwr?optimize=true",
         style:
           "mapbox://styles/chaitanyaraj/cl8oazq8v002115lgjwjkbixh?optimize=true",
-        zoom: 2,
+        zoom: 1.75,
         minZoom: 1.75,
         center: [-9.142685, 38.736946],
         projection: "mercator",
