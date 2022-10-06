@@ -8,7 +8,7 @@
           :src="user.photo"
          -->
         <img
-          :src="`https://ui-avatars.com/api/?background=000&color=fff&name=${
+          :src="`https://ui-avatars.com/api/?background=random&name=${
             user.fullName.split(' ')[0]
           }+${user.fullName.split(' ')[1]}`"
           alt=""

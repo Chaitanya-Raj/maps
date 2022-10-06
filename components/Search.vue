@@ -35,14 +35,9 @@
                       :src="hit.photo"
                      -->
                     <img
-                      :src="`https://ui-avatars.com/api/?background=${'000000'.replace(
-                        /0/g,
-                        function () {
-                          return (~~(Math.random() * 16)).toString(16);
-                        }
-                      )}&color=fff&name=${hit.fullName.split(' ')[0]}+${
-                        hit.fullName.split(' ')[1]
-                      }`"
+                      :src="`https://ui-avatars.com/api/?background=random&name=${
+                        hit.fullName.split(' ')[0]
+                      }+${hit.fullName.split(' ')[1]}`"
                       alt=""
                       class="w-12 rounded-full opacity-100"
                     />
